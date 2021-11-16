@@ -5,7 +5,6 @@ from telebot import types
 from fuzzywuzzy import fuzz
 import pickle
 
-
 bot = telebot.TeleBot('2115882328:AAFxgL0uHGtc4tKqlB9_EtScnqyZeO_CLDk')
 sTime = 0 #cтартовое время
 text = "" #текст, который будет
@@ -35,9 +34,16 @@ n = 2
 
 results = []
 
-def save(obj):
-    my_pickled_object = pickle.dumps(obj)
-    print(my_pickled_object)
+def save(filename,object):
+    file=open(filename,'wb')
+    pickle.dump(object,file)
+    file.close()
+
+def load(filename):
+    file=open(filename,'rb')
+    object=pickle.load(file)
+    file.close()
+    return object
 
 class Result:
     def __init__(self, id_, name_, score_):
@@ -55,6 +61,7 @@ def tryToAddToTable(id, name, score):
     if len(results) < 10 or results[9].score < score:
         for i in results:
             if i.id == id and score > i.score:
+                print("delete")
                 results.remove(i)
 
         results.append(result)
@@ -68,7 +75,7 @@ def sortResults():
     for i in range(0, len(results)):
         print(results[i].name + " " + str(results[i].score))
 
-    save(results)
+    save("data.txt", results)
 
 @bot.message_handler(content_types=['text'])
 def start(message):
@@ -116,7 +123,7 @@ def start(message):
         else:
             timeText += " ❌"
 
-        bot.send_message(message.chat.id, timeText + ", " + errorsText)
+        bot.send_message(message.from_user.id, timeText + ", " + errorsText)
 
         name = message.from_user.first_name
         lastName = message.from_user.last_name
@@ -137,8 +144,11 @@ def callback_worker(call):
     global text_easy_rus
     global text_norm_rus
     global text_hard_rus
+    global results
 
     if call.data == "go":
+        results = load("data.txt")
+
         if curr_lang == "Russian":
             if n == 2:
                 text_num = random.randrange(0, len(text_norm_rus))

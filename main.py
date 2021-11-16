@@ -1,13 +1,13 @@
 import telebot, random
 from telebot import types
+from fuzzywuzzy import fuzz
 import time
-import math
+
 
 bot = telebot.TeleBot('2115882328:AAFxgL0uHGtc4tKqlB9_EtScnqyZeO_CLDk')
 sTime = 0 #cтартовое время
 text = "" #текст, который будет
 isTraining = False
-sPerChar = 0.6 #секунды за символы
 isWorking = True
 
 
@@ -37,35 +37,22 @@ def start(message):
         isTraining = False
 
         #проверка на ошибки
-        errors = 0
-        l = 0
-
-        if len(message.text) < len(text):
-            l = len(message.text)
-            errors = len(text) - len(message.text)
-
-        else:
-            l = len(text)
-            errors += len(message.text) - len(text)
-
-        for i in range(0, l):
-            if (text[i] != message.text[i]):    
-                errors+=1
+        ratio = fuzz.ratio(message.text, text)
 
         errorsText = ""
-        if(errors == 0):
+        if(ratio == 100):
             errorsText = "ошибок нет✔️"
         else:
-            errorsText = "ошибок: " + str(errors) + "❌"
+            errorsText = "совпадение: " + str(ratio) + "% ❌"
 
-        rTime = time.time() - sTime #результат времемени
-        dTime = len(text) * sPerChar #желательное время
+        rTime = round(time.time() - sTime, 1) #результат времемени
+        charsPerSecond = round(len(message.text)/rTime, 1)
 
-        timeText = "Время: " + str(math.floor(rTime))
-        if(rTime <= dTime):
-            timeText += "с ✔️"
+        timeText = "Символы в секунду: " + str(charsPerSecond)
+        if charsPerSecond >= 1.5:
+            timeText += " ✔"
         else:
-            timeText += "с ❌"
+            timeText += " ❌"
 
         bot.send_message(message.chat.id, timeText + ", " + errorsText)
         

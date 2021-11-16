@@ -8,9 +8,24 @@ from fuzzywuzzy import fuzz
 bot = telebot.TeleBot('2115882328:AAFxgL0uHGtc4tKqlB9_EtScnqyZeO_CLDk')
 sTime = 0 #cтартовое время
 text = "" #текст, который будет
-text_easy_rus = []
-text_norm_rus = ["112 год до нашей эры был годом до-юлианского римского календаря. В то время он был известен как Год консульства Друза и Цезонина и Пятый год Юандинга.", "Амбавади-это район, расположенный в Ахмадабаде, Индия. Основными достопримечательностями этого района являются Центральный торговый центр Ахмадабада, базар Амбавади шаак (овощной рынок) и сад Паримал.", "Закон об оказании помощи и подотчетности в связи с геноцидом в Ираке и Сирии 2018 года представляет собой закон о предоставлении гуманитарной помощи жертвам геноцида, совершенного Исламским государством Ирак и Левант (ИГИЛ) во время Гражданской войны в Сирии и Ираке."] #текст, который будет
-text_hard_rus = []
+text_easy_rus = ["Поздно ночью из похода воротился воевода. Он слугам велит молчать; в спальню кинулся к постеле; Дернул полог… В самом деле! Никого; пуста кровать.", 
+"Пять зелёных лягушат в воду броситься спешат — испугались цапли! А меня они смешат: я же этой цапли не боюсь ни капли!", 
+"Есть телевизор — подайте трибуну, так проору — разнесётся на мили! Он не окно, я в окно и не плюну — мне будто дверь в целый мир прорубили."]
+text_norm_rus = ["112 год до нашей эры был годом до-юлианского римского календаря. В то время он был известен как Год консульства Друза и Цезонина и Пятый год Юандинга.", 
+"Амбавади-это район, расположенный в Ахмадабаде, Индия. Основными достопримечательностями этого района являются Центральный торговый центр Ахмадабада, базар Амбавади шаак (овощной рынок) и сад Паримал.", 
+"Закон об оказании помощи и подотчетности в связи с геноцидом в Ираке и Сирии 2018 года представляет собой закон о предоставлении гуманитарной помощи жертвам геноцида, совершенного Исламским государством Ирак и Левант (ИГИЛ) во время Гражданской войны в Сирии и Ираке."] #текст, который будет
+text_hard_rus = ["С точки зpения банальной эpудиции каждый индивидуум, кpитически мотивиpующий абстpакцию, не может игноpиpовать кpитеpии утопического субьективизма, концептуально интеpпpетиpуя общепpинятые дефанизиpующие поляpизатоpы, поэтому консенсус, достигнутый диалектической матеpиальной классификацией всеобщих мотиваций в паpадогматических связях пpедикатов, pешает пpоблему усовеpшенствования фоpмиpующих геотpансплантационных квазипузлистатов всех кинетически коpеллиpующих аспектов.", 
+"Исходя из этого, мы пpишли к выводу, что каждый пpоизвольно выбpанный пpедикативно абсоpбиpующий обьект pациональной мистической индукции можно дискpетно детеpминиpовать с аппликацией ситуационной паpадигмы коммуникативно-функционального типа пpи наличии детектоpно-аpхаического дистpибутивного обpаза в Гилбеpтовом конвеpгенционном пpостpанстве, однако пpи паpаллельном колабоpационном анализе спектpогpафичеких множеств, изомоpфно pелятивных к мультиполосным гипеpболическим паpаболоидам, интеpпpетиpующим антpопоцентpический многочлен Hео-Лагpанжа, возникает позиционный сигнификатизм гентильной теоpии психоанализа, в pезультате чего надо пpинять во внимание следующее...", 
+"поскольку не только эзотеpический, но и экзистенциальный аппеpцепциониpованный энтpополог антецедентно пассивизиpованный высокоматеpиальной субстанцией, обладает пpизматической идиосинхpацией, но так как валентностный фактоp отpицателен, то и, соответственно, антагонистический дискpедитизм дегpадиpует в эксгибиционном напpавлении, поскольку, находясь в пpепубеpтатном состоянии, пpактически каждый субьект, меланхолически осознавая эмбpиональную клаустоpофобию, может экстpаполиpовать любой пpоцесс интегpации и диффеpенциации в обоих напpавлениях, отсюда следует, что в pезультате синхpонизации, огpаниченной минимально допустимой интеpполяцией обpаза, все методы конвеpгенционной концепции тpебуют пpактически тpадиционных тpансфоpмаций неоколониализма."]
+text_easy_eng = ["Two roads diverged in a yellow wood, and sorry I could not travel both and be one traveler, long I stood and looked down one as far as I could to where it bent in the undergrowth.",
+"A little yellow Bird above, a little yellow Flower below; the little Bird can sing the love that Bird and Blossom know; the Blossom has no song nor wing, but breathes the love he cannot sing.", 
+"In the other gardens and all up the vale, from the autumn bonfires see the smoke trail! Pleasant summer over and all the summer flowers; the red fire blazes, the grey smoke towers."]
+text_norm_eng = ["The events unfolding on a tapestry took place in the years 1064 to 1066. Anglo-Saxon earl Harold Godwinson is depicted receiving the English crown from Edward the Confessor, a deathly ill English monarch. An invading Norman force is then shown, which soon engages Saxon forces in a bloody battle. Ultimately king Harold is slain, and English forces flee the battlefield. The last part of the tapestry was supposedly lost and a newer piece was added in its place roughly in 1810.", 
+"The tapestry is made largely of plain weave linen and embroidered with wool yarn. The woolen crewelwork is made in various shades of brown, blue and green, mainly terracotta, russet, and olive green. Later restorations have also added some brighter colours, such as orange and light yellow. Attempts at restoration of both the beginning and the end of the tapestry were made at some points, adding some missing tituli and numerals, although an ongoing debate disputes the validity of these restorations.", 
+"The idea of ‘eternal return’ (or recurrence) is the idea that each event and occurrence that happens, repeats itself eternally in cycles. Rather than postulating this, Nietzsche actually ponders if it’s true. Although it’s a very popular idea that seemingly stems logically from the laws of infinite Universe as we know it, it still hasn’t been proven nor disproven, so Nietzsche marks it as ‘the most burdensome’ of his thoughts."]
+text_hard_eng = ["The development of a human embryo can go awry in many different ways. One of the most common types of birth defects that afflict yet unborn children are referred to as neural tube defects (NTDs). A premise for the development of NTDs lies in an incomplete closure of a neural tube, a precursor to the human central nervous system that forms from an embryo’s nervous tissue over the course of a normal development. As a result, an opening remains in the developing spine or cranium of the fetus, which, depending on its severity, can fully disrupt the growth of the nervous system. Neural tube defects affect either the development of the brain, or spine, or both. Most of the conditions that stem from NTDs are usually untreatable, leave the person largely disabled, and have an extremely high mortality rate.", 
+"A game is usually defined as a process involving two or more actors, each of them having something to gain or lose through their actions after the game is finished (or ‘solved’). Thus, the definition applies to most of the regular games (like, for example, poker), but can be broadened as necessary to cover multitudes of other situations, both real and hypothetical. The action is presumed to be taken by a ‘rational agent’ - that is, an actor that acts consistently and always chooses an action that is the most optimal in terms of loss/gain ratio according to his current position. A game can be cooperative or non-cooperative, allowing or disallowing willing alliances between the participants respectively.", 
+"One of the most famous examples of finding Nash equilibrium is a thought experiment called Prisoner’s dilemma. Suppose there are two prisoners interrogated in two different prison cells. They have no way to communicate with each other, but each of them knows that the other is also interrogated. Each prisoner is sentenced to one year in prison. Each prisoner is then offered a deal: if he testifies against the other, he is set free, while the other gets a harsher, 3-year penalty. However, if both prisoners testify against each other, both of them will get a harder sentence, and both will serve 2 years in prison. Each prisoner can choose either to testify or to remain silent. What is the optimal course of action for each prisoner?"]
 isTraining = False
 isWorking = True
 languages = ["Russian", "English"]
@@ -88,6 +103,17 @@ def callback_worker(call):
             else:
                 text_num = random.randrange(0, len(text_hard_rus))
                 text = text_hard_rus[text_num]
+
+        if curr_lang == "English":
+            if n == 2:
+                text_num = random.randrange(0, len(text_norm_eng))
+                text = text_norm_eng[text_num]
+            elif n == 1:
+                text_num = random.randrange(0, len(text_easy_eng))
+                text = text_easy_eng[text_num]
+            else:
+                text_num = random.randrange(0, len(text_hard_eng))
+                text = text_hard_eng[text_num]
 
         sTime = time.time()
         isTraining = True

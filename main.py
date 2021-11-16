@@ -91,6 +91,7 @@ def callback_worker(call):
     global text_easy_rus
     global text_norm_rus
     global text_hard_rus
+    global n
 
     if call.data == "go":
         if curr_lang == "Russian":
@@ -131,8 +132,12 @@ def callback_worker(call):
         keyboard = types.InlineKeyboardMarkup()
         key_ch_lang = types.InlineKeyboardButton(text='Сменить язык тестов', callback_data='ch_lang');
         keyboard.add(key_ch_lang)
+        key_ch_n = types.InlineKeyboardButton(text='Сменить сложность тестов', callback_data='ch_n');
+        keyboard.add(key_ch_n)
 
-        bot.send_message(call.message.chat.id, 'Язык тестов - {}'.format(curr_lang), reply_markup = keyboard)
+        bot.send_message(call.message.chat.id, 'Язык тестов - {}'.format(curr_lang))
+        bot.send_message(call.message.chat.id, 'Сложность тестов - {}'.format(n), reply_markup = keyboard)
+
     if call.data == "ch_lang":
         keyboard = types.InlineKeyboardMarkup()
         key_eng = types.InlineKeyboardButton(text='English', callback_data='eng');
@@ -163,5 +168,49 @@ def callback_worker(call):
         keyboard.add(key_go)
 
         bot.send_message(call.message.chat.id, 'Язык тестов заменён на: {}'.format(curr_lang), reply_markup = keyboard)
+
+    if call.data == "ch_n":
+        keyboard = types.InlineKeyboardMarkup()
+        key_easy = types.InlineKeyboardButton(text='Легко', callback_data='easy');
+        keyboard.add(key_easy)
+        key_norm = types.InlineKeyboardButton(text='Нормально', callback_data='norm');
+        keyboard.add(key_norm)
+        key_hard = types.InlineKeyboardButton(text='Сложно', callback_data='hard');
+        keyboard.add(key_hard)
+
+        bot.send_message(call.message.chat.id, 'Доступные уровни сложности:', reply_markup = keyboard)
+
+    if call.data == "easy":
+        n = 1
+
+        keyboard = types.InlineKeyboardMarkup()
+        key_settings = types.InlineKeyboardButton(text='Настройки', callback_data='settings');
+        keyboard.add(key_settings);
+        key_go= types.InlineKeyboardButton(text='Начать тренировку!', callback_data='go')
+        keyboard.add(key_go)
+
+        bot.send_message(call.message.chat.id, 'Сложность тестов заменена на: {}'.format(str(n)), reply_markup = keyboard)
+
+    if call.data == "norm":
+        n = 2
+
+        keyboard = types.InlineKeyboardMarkup()
+        key_settings = types.InlineKeyboardButton(text='Настройки', callback_data='settings');
+        keyboard.add(key_settings);
+        key_go= types.InlineKeyboardButton(text='Начать тренировку!', callback_data='go')
+        keyboard.add(key_go)
+
+        bot.send_message(call.message.chat.id, 'Сложность тестов заменена на: {}'.format(str(n)), reply_markup = keyboard)
+
+    if call.data == "hard":
+        n = 3
+
+        keyboard = types.InlineKeyboardMarkup()
+        key_settings = types.InlineKeyboardButton(text='Настройки', callback_data='settings');
+        keyboard.add(key_settings);
+        key_go= types.InlineKeyboardButton(text='Начать тренировку!', callback_data='go')
+        keyboard.add(key_go)
+
+        bot.send_message(call.message.chat.id, 'Сложность тестов заменена на: {}'.format(str(n)), reply_markup = keyboard)
 
 bot.polling(none_stop=isWorking, interval=0)

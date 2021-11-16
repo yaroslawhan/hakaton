@@ -3,6 +3,7 @@
 import telebot, random, time
 from telebot import types
 from fuzzywuzzy import fuzz
+import pickle
 
 
 bot = telebot.TeleBot('2115882328:AAFxgL0uHGtc4tKqlB9_EtScnqyZeO_CLDk')
@@ -31,6 +32,43 @@ isWorking = True
 languages = ["Russian", "English"]
 curr_lang = "Russian"
 n = 2
+
+results = []
+
+def save(obj):
+    my_pickled_object = pickle.dumps(obj)
+    print(my_pickled_object)
+
+class Result:
+    def __init__(self, id_, name_, score_):
+        self.id = id_
+        self.name = name_
+        self.score = score_
+        self.ratio = 100 #совпадение
+        self.cps = 0 #символы в секунду
+
+
+def tryToAddToTable(id, name, score):
+    global results
+    result = Result(id, name, score)
+
+    if len(results) < 10 or results[9].score < score:
+        for i in results:
+            if i.id == id and score > i.score:
+                results.remove(i)
+
+        results.append(result)
+        sortResults()
+
+def sortResults():
+    global results
+
+    results = sorted(results, key=lambda x: x.score, reverse=True)
+
+    for i in range(0, len(results)):
+        print(results[i].name + " " + str(results[i].score))
+
+    save(results)
 
 @bot.message_handler(content_types=['text'])
 def start(message):
@@ -79,6 +117,14 @@ def start(message):
             timeText += " ❌"
 
         bot.send_message(message.chat.id, timeText + ", " + errorsText)
+
+        name = message.from_user.first_name
+        lastName = message.from_user.last_name
+
+        if lastName != None:
+            name += " " + lastName
+
+        tryToAddToTable(message.chat.id, name, charsPerSecond * (ratio/100))
         
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -91,7 +137,6 @@ def callback_worker(call):
     global text_easy_rus
     global text_norm_rus
     global text_hard_rus
-    global n
 
     if call.data == "go":
         if curr_lang == "Russian":
@@ -132,12 +177,8 @@ def callback_worker(call):
         keyboard = types.InlineKeyboardMarkup()
         key_ch_lang = types.InlineKeyboardButton(text='Сменить язык тестов', callback_data='ch_lang');
         keyboard.add(key_ch_lang)
-        key_ch_n = types.InlineKeyboardButton(text='Сменить сложность тестов', callback_data='ch_n');
-        keyboard.add(key_ch_n)
 
-        bot.send_message(call.message.chat.id, 'Язык тестов - {}'.format(curr_lang))
-        bot.send_message(call.message.chat.id, 'Сложность тестов - {}'.format(n), reply_markup = keyboard)
-
+        bot.send_message(call.message.chat.id, 'Язык тестов - {}'.format(curr_lang), reply_markup = keyboard)
     if call.data == "ch_lang":
         keyboard = types.InlineKeyboardMarkup()
         key_eng = types.InlineKeyboardButton(text='English', callback_data='eng');
@@ -168,49 +209,5 @@ def callback_worker(call):
         keyboard.add(key_go)
 
         bot.send_message(call.message.chat.id, 'Язык тестов заменён на: {}'.format(curr_lang), reply_markup = keyboard)
-
-    if call.data == "ch_n":
-        keyboard = types.InlineKeyboardMarkup()
-        key_easy = types.InlineKeyboardButton(text='Легко', callback_data='easy');
-        keyboard.add(key_easy)
-        key_norm = types.InlineKeyboardButton(text='Нормально', callback_data='norm');
-        keyboard.add(key_norm)
-        key_hard = types.InlineKeyboardButton(text='Сложно', callback_data='hard');
-        keyboard.add(key_hard)
-
-        bot.send_message(call.message.chat.id, 'Доступные уровни сложности:', reply_markup = keyboard)
-
-    if call.data == "easy":
-        n = 1
-
-        keyboard = types.InlineKeyboardMarkup()
-        key_settings = types.InlineKeyboardButton(text='Настройки', callback_data='settings');
-        keyboard.add(key_settings);
-        key_go= types.InlineKeyboardButton(text='Начать тренировку!', callback_data='go')
-        keyboard.add(key_go)
-
-        bot.send_message(call.message.chat.id, 'Сложность тестов заменена на: {}'.format(str(n)), reply_markup = keyboard)
-
-    if call.data == "norm":
-        n = 2
-
-        keyboard = types.InlineKeyboardMarkup()
-        key_settings = types.InlineKeyboardButton(text='Настройки', callback_data='settings');
-        keyboard.add(key_settings);
-        key_go= types.InlineKeyboardButton(text='Начать тренировку!', callback_data='go')
-        keyboard.add(key_go)
-
-        bot.send_message(call.message.chat.id, 'Сложность тестов заменена на: {}'.format(str(n)), reply_markup = keyboard)
-
-    if call.data == "hard":
-        n = 3
-
-        keyboard = types.InlineKeyboardMarkup()
-        key_settings = types.InlineKeyboardButton(text='Настройки', callback_data='settings');
-        keyboard.add(key_settings);
-        key_go= types.InlineKeyboardButton(text='Начать тренировку!', callback_data='go')
-        keyboard.add(key_go)
-
-        bot.send_message(call.message.chat.id, 'Сложность тестов заменена на: {}'.format(str(n)), reply_markup = keyboard)
 
 bot.polling(none_stop=isWorking, interval=0)

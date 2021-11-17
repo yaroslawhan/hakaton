@@ -34,14 +34,17 @@ curr_lang = "Russian"
 n = 2
 results = [] 
 
-#with open('data.pickle', 'rb') as f:
-    #results = pickle.loads(f)
+def save(filename,object):
+    file=open(filename,'wb')
+    pickle.dump(object,file)
+    file.close()
 
-def save(obj): #
-    with open('data.pickle', 'wb') as f:
-        pickle.dump(obj, f)
-    my_pickled_object = pickle.dumps(obj)
-    print(my_pickled_object)
+def load(filename):
+    file=open(filename,'rb')
+    object=pickle.load(file)
+    file.close()
+    return object
+
 
 class Result: #
     def __init__(self, id_, name_, score_):
@@ -71,7 +74,7 @@ def sortResults(): #
     for i in range(0, len(results)):
         print(results[i].name + " " + str(results[i].score))
 
-    save(results)
+    save("data.txt", results)
 
 @bot.message_handler(content_types=['text'])
 def start(message):
@@ -151,6 +154,10 @@ def callback_worker(call):
     global text_norm_rus
     global text_hard_rus
     global n
+    global results
+
+    results = load("data.txt")
+
 
     if call.data == "go":
         if curr_lang == "Russian":
